@@ -1,0 +1,54 @@
+name: C/C++ Build (STM32F429)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      TOOLCHAIN_VERSION: "13.3.rel1"
+      TOOLCHAIN_URL: "https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi.tar.xz"
+      TOOLCHAIN_DIR: /opt/gcc-arm
+      BUILD_DIR: build
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # ---------------------------------------------------------
+    # Install ARM GCC (arm-none-eabi-gcc)
+    # ---------------------------------------------------------
+    - name: Install ARM GCC Toolchain
+      run: |
+        sudo mkdir -p $TOOLCHAIN_DIR
+        wget -q $TOOLCHAIN_URL -O arm-toolchain.tar.xz
+        sudo tar -xf arm-toolchain.tar.xz -C $TOOLCHAIN_DIR --strip-components=1
+        echo "$TOOLCHAIN_DIR/bin" >> $GITHUB_PATH
+        arm-none-eabi-gcc --version
+
+    # ---------------------------------------------------------
+    # Configure CMake (for STM32)
+    # ---------------------------------------------------------
+    - name: Configure project (CMake)
+      run: |
+        cmake -S . -B $BUILD_DIR \
+          -DCMAKE_TOOLCHAIN_FILE=cmake/toolchain-arm-none-eabi.cmake \
+          -DCMAKE_BUILD_TYPE=Release
+
+    # ---------------------------------------------------------
+    # Compile firmware
+    # ---------------------------------------------------------
+    - name: Build
+      run: |
+        cmake --build $BUILD_DIR -- -j$(nproc)
+
+    # ---------------------------------------------------------
+    # Optionally: Verify artifact exists
+    # (ELF or BIN)
+    # ---------------------------------------------------------
+    - name: Check artifact
+      run: |
+        test -f $BUILD_DIR/*.elf || test -f $BUILD_DIR/*.bin
