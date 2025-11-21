@@ -6,7 +6,7 @@
     "configurations": [
         {
             "command": "exit",
-            "name": "Run npm start",
+            "name": "Upload executable to STM32",
             "request": "launch",
             "type": "node-terminal",
             "preLaunchTask": "Run CubeProg"

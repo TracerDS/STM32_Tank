@@ -4,9 +4,8 @@
 extern "C" {
 #endif
 
-#include "stm32f4xx_hal.h"
-
-void Error_Handler();
+#include <stm32f4xx_hal.h>
+#include <stm32f4xx_hal_gpio.h>
 
 #define USER_Btn_Pin GPIO_PIN_13
 #define USER_Btn_GPIO_Port GPIOC
