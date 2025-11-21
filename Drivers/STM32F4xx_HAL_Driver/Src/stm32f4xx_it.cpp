@@ -1,4 +1,5 @@
 #include "main.hpp"
+#include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_it.h"
 
 /******************************************************************************/

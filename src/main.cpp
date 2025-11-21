@@ -3,6 +3,10 @@
 #include "stm32f4xx_hal_gpio.h"
 #include "string.h"
 
+#include <cstdio>
+#include <cstdint>
+#include <functional>
+
 ETH_TxPacketConfig TxConfig;
 ETH_DMADescTypeDef  DMARxDscrTab[ETH_RX_DESC_CNT]; /* Ethernet Rx DMA Descriptors */
 ETH_DMADescTypeDef  DMATxDscrTab[ETH_TX_DESC_CNT]; /* Ethernet Tx DMA Descriptors */
@@ -16,6 +20,23 @@ static void MX_GPIO_Init();
 static void MX_ETH_Init();
 static void MX_USART3_UART_Init();
 static void MX_USB_OTG_FS_PCD_Init();
+
+std::function Blink = [](int num) {
+    if (num & 0x1)
+        HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, GPIO_PIN_SET);
+    else
+        HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, GPIO_PIN_RESET);
+    
+    if (num & 0x2)
+        HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+    else
+        HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+
+    if (num & 0x4)
+        HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
+    else
+        HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+};
 
 int main()
 {
@@ -31,10 +52,15 @@ int main()
     MX_USART3_UART_Init();
     MX_USB_OTG_FS_PCD_Init();
 
+    std::uint8_t num = 0;
     while (true)
     {
-        HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
-        HAL_Delay(1000);
+        ++num;
+        if (num > 0b111)
+            num = 0;
+        Blink(num);
+
+        HAL_Delay(800);
     }
 }
 
