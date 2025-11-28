@@ -44,10 +44,15 @@ namespace HAL {
             { Pins::TMS_Pin, Pins::TMS_GPIO_Port },
             { Pins::TCK_Pin, Pins::TCK_GPIO_Port },
         };
+        
         if (pinToGPIOMap.find(pin) != pinToGPIOMap.end()) {
             return pinToGPIOMap.at(pin);
         }
         return nullptr;
+    }
+
+    void HAL::Init() noexcept {
+        HAL_Init();
     }
     
     void HAL::TogglePin(std::uint16_t pin) noexcept {
@@ -56,6 +61,12 @@ namespace HAL {
             return;
 
         HAL_GPIO_TogglePin(port, pin);
+    }
+
+    void HAL::TogglePins(std::initializer_list<std::uint16_t> pins) noexcept {
+        for (const auto& pin : pins) {
+            TogglePin(pin);
+        }
     }
 
     void HAL::WritePin(std::uint16_t pin, bool state) noexcept {
@@ -68,6 +79,15 @@ namespace HAL {
             pin,
             state ? GPIO_PinState::GPIO_PIN_SET : GPIO_PinState::GPIO_PIN_RESET
         );
+    }
+    
+    void HAL::WritePins(
+        std::initializer_list<std::uint16_t> pins,
+        bool value
+    ) noexcept {
+        for (const auto& pin : pins) {
+            WritePin(pin, value);
+        }
     }
 
     bool HAL::ReadPin(std::uint16_t pin) noexcept {

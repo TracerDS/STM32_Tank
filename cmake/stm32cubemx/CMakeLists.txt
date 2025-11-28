@@ -29,16 +29,6 @@ file(GLOB APP_SOURCES CONFIGURE_DEPENDS
 set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../startup_stm32f429xx.s
     ${APP_SOURCES}
-
-#    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/main.c
-#    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/gpio.c
-#    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/eth.c
-#    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/usart.c
-#    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/usb_otg.c
-#    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/stm32f4xx_it.c
-#    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/stm32f4xx_hal_msp.c
-#    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/sysmem.c
-#    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/syscalls.c
 )
 
 # STM32 HAL/LL Drivers

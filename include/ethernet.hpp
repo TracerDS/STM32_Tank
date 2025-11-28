@@ -1,7 +1,7 @@
 #pragma once
 
-namespace USART {
-    class USART {
+namespace Ethernet {
+    class Ethernet {
     public:
         static void Init();
     };

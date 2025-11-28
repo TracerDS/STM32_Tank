@@ -1,3 +1,8 @@
 #pragma once
 
-void MX_GPIO_Init();
+namespace GPIO {
+    class GPIO {
+    public:
+        static void Init();
+    };
+}

@@ -1,7 +1,7 @@
 #pragma once
 
-namespace USART {
-    class USART {
+namespace SysClock {
+    class SysClock {
     public:
         static void Init();
     };
