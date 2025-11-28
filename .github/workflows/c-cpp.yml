@@ -1,0 +1,48 @@
+name: C/C++ Build (STM32F429)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # ---------------------------------------------------------
+    # Install ARM GCC
+    # ---------------------------------------------------------
+    - name: Install Arm GNU Toolchain
+      run: |
+        wget -q https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi.tar.xz
+        tar -xf arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi.tar.xz
+        # The extracted folder name:
+        echo "$PWD/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_PATH
+
+    - name: Verify arm-none-eabi-gcc exists
+      run: |
+        which arm-none-eabi-gcc
+        arm-none-eabi-gcc --version
+
+    # ---------------------------------------------------------
+    # Configure (requires your CMakeLists + toolchain file)
+    # ---------------------------------------------------------
+    - name: Configure CMake
+      run: |
+        cmake -S . -B build \
+          -DCMAKE_TOOLCHAIN_FILE=cmake/gcc-arm-none-eabi.cmake \
+          -DCMAKE_BUILD_TYPE=Release
+
+    # ---------------------------------------------------------
+    # Build Firmware
+    # ---------------------------------------------------------
+    - name: Build
+      run: cmake --build build -- -j$(nproc)
+
+    # Optional: verify firmware output
+    - name: Check artifacts
+      run: |
+        ls -l build
