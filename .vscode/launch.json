@@ -1,9 +1,13 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        {
+            "command": "exit",
+            "name": "Compile",
+            "request": "launch",
+            "type": "node-terminal",
+            "preLaunchTask": "Build"
+        },
         {
             "command": "exit",
             "name": "Upload executable to STM32",

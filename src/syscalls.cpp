@@ -1,133 +1,118 @@
 #include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/times.h>
 #include <cstdlib>
 #include <cerrno>
 #include <cstdio>
 #include <csignal>
 #include <ctime>
-#include <sys/time.h>
-#include <sys/times.h>
 
 extern "C" {
 
 extern int __io_putchar(int ch) __attribute__((weak));
 extern int __io_getchar() __attribute__((weak));
 
+
 char* __env[1] = { 0 };
-char **environ = __env;
+char** environ = __env;
 
-void initialise_monitor_handles()
-{
-}
 
-int _getpid()
-{
+/* Functions */
+void initialise_monitor_handles() {}
+
+int _getpid() {
     return 1;
 }
 
-int _kill(int pid, int sig)
-{
+int _kill(int pid, int sig) {
     (void)pid;
     (void)sig;
     errno = EINVAL;
     return -1;
 }
 
-void _exit (int status)
-{
+void _exit (int status) {
     _kill(status, -1);
     while (1) {}    /* Make sure we hang here */
 }
 
-__attribute__((weak)) int _read(int file, char* ptr, int len)
-{
+__attribute__((weak)) int _read(int file, char* ptr, int len) {
     (void)file;
     int DataIdx;
 
-    for (DataIdx = 0; DataIdx < len; DataIdx++)
-    {
+    for (DataIdx = 0; DataIdx < len; DataIdx++) {
         *ptr++ = __io_getchar();
     }
 
     return len;
 }
 
-__attribute__((weak)) int _write(int file, char* ptr, int len)
-{
+__attribute__((weak)) int _write(int file, char* ptr, int len) {
     (void)file;
     int DataIdx;
 
-    for (DataIdx = 0; DataIdx < len; DataIdx++)
-    {
+    for (DataIdx = 0; DataIdx < len; DataIdx++) {
         __io_putchar(*ptr++);
     }
     return len;
 }
 
-int _close(int file)
-{
+int _close(int file) {
     (void)file;
     return -1;
 }
 
 
-int _fstat(int file, struct stat* st)
-{
+int _fstat(int file, struct stat* st) {
     (void)file;
     st->st_mode = S_IFCHR;
     return 0;
 }
 
-int _isatty(int file)
-{
+int _isatty(int file) {
     (void)file;
     return 1;
 }
 
-int _lseek(int file, int ptr, int dir)
-{
+int _lseek(int file, int ptr, int dir) {
     (void)file;
     (void)ptr;
     (void)dir;
     return 0;
 }
 
-int _open(char* path, int flags, ...)
-{
+int _open(char* path, int flags, ...) {
     (void)path;
     (void)flags;
-    /* Pretend like we always fail */
+
+    // Pretend like we always fail
     return -1;
 }
 
-int _wait(int* status)
-{
+int _wait(int* status) {
     (void)status;
     errno = ECHILD;
     return -1;
 }
 
-int _unlink(char* name)
-{
+int _unlink(char* name) {
     (void)name;
     errno = ENOENT;
     return -1;
 }
 
-clock_t _times(struct tms* buf)
-{
+clock_t _times(struct tms* buf) {
     (void)buf;
     return -1;
 }
 
-int _stat(const char* file, struct stat* st)
-{
+int _stat(const char* file, struct stat* st) {
     (void)file;
     st->st_mode = S_IFCHR;
     return 0;
 }
 
-int _link(char* oldStr, char* newStr)
-{
+int _link(const char* oldStr, const char* newStr) {
     (void)oldStr;
     (void)newStr;
     errno = EMLINK;
@@ -140,7 +125,7 @@ int _fork()
     return -1;
 }
 
-int _execve(char* name, char** argv, char** env)
+int _execve(const char* name, const char** argv, const char** env)
 {
     (void)name;
     (void)argv;
@@ -174,9 +159,8 @@ static int starm_putc(char c, FILE* file)
  */
 static int starm_getc(FILE* file)
 {
-    unsigned char c;
     (void) file;
-    c = __io_getchar();
+    auto c = __io_getchar();
     return c;
 }
 
@@ -215,6 +199,6 @@ __strong_reference(_exit, exit);
 __strong_reference(_kill, kill);
 __strong_reference(_getpid, getpid);
 
-#endif //__PICOLIBC__
+#endif
 
 }

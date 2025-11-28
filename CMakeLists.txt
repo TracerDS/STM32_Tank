@@ -19,7 +19,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Set the project name
-set(CMAKE_PROJECT_NAME F429ZI)
+set(CMAKE_PROJECT_NAME F429ZIT6)
 
 # Enable compile command to ease indexing with e.g. clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
@@ -28,8 +28,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 project(${CMAKE_PROJECT_NAME})
 message("Build type: " ${CMAKE_BUILD_TYPE})
 
-# Enable CMake support for ASM and C languages
-enable_language(C ASM)
+# Enable CMake support for ASM and C++ languages
+enable_language(CXX ASM)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})

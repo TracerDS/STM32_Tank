@@ -1,18 +1,14 @@
-#include "stm32f4xx_hal.h"
 #include <main.hpp>
-#include <initDriver.hpp>
-#include <HAL.hpp>
+#include <eth.hpp>
+#include <usart.hpp>
+#include <usb_otg.hpp>
+#include <gpio.hpp>
 
-#include <cstdio>
-#include <cstdint>
-#include <functional>
-#include <list>
-#include <thread>
+#include <hal.hpp>
 
-std::list<std::function<void()>> taskQueue;
+void SystemClock_Config();
 
-int main()
-{
+int main() {
     // Reset of all peripherals, Initializes the Flash interface and the Systick.
     HAL_Init();
 
@@ -25,72 +21,76 @@ int main()
     MX_USART3_UART_Init();
     MX_USB_OTG_FS_PCD_Init();
 
-    HAL::WritePins({LD1_Pin, LD2_Pin, LD3_Pin}, true);
-
-    static bool initialized = false;
-
-    auto it = taskQueue.emplace(taskQueue.end());
-    *it = [it](){
-        if (!HAL::ReadPin(USER_Btn_Pin)) {
-            return;
-        }
-        if (initialized)
-            return;
-        initialized = true;
-
-        HAL::TogglePins({LD1_Pin, LD2_Pin, LD3_Pin});
-
-        taskQueue.erase(it);
-    };
-
-    uint32_t timeBetweenBlinks = 500;
-    uint32_t current = HAL::GetTick();
-
-    enum class Mode {
-        LED1 = 0,
-        LED2 = 1,
-        LED3 = 2,
-    } mode = Mode::LED1;
-
-    const auto ModeToPin = [](Mode m) {
-        switch (m) {
-            default:
-            case Mode::LED1: return LD1_Pin;
-            case Mode::LED2: return LD2_Pin;
-            case Mode::LED3: return LD3_Pin;
-        }
-    };
-
-    bool pressed = false;
-
-    while (true)
-    {
-        for (const auto& task : taskQueue) {
-            task();
-        }
-        if (!initialized)
-            continue;
-
-        if (HAL::ReadPin(USER_Btn_Pin) && !pressed) {
-            pressed = true;
-        } else {
-            pressed = false;
-        }
-
-        if (HAL::GetTick() - current >= timeBetweenBlinks) {
-            if (mode == Mode::LED1) {
-                HAL::WritePins({LD2_Pin, LD3_Pin}, false);
-            } else if (mode == Mode::LED2) {
-                HAL::WritePins({LD1_Pin, LD3_Pin}, false);
-            } else if (mode == Mode::LED3) {
-                HAL::WritePins({LD1_Pin, LD2_Pin}, false);
-            }
-            HAL::TogglePin(ModeToPin(mode));
-            current = HAL::GetTick();
-        }
-
-        if (pressed) {
-            mode = static_cast<Mode>((static_cast<int>(mode) + 1) % 3);
-        }
+    while (true) {
+        HAL::HAL::TogglePin(Pins::LD1_Pin);
+        HAL::HAL::Delay(500);
     }
 }
+
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
+void SystemClock_Config()
+{
+    // Configure the main internal regulator output voltage
+    __HAL_RCC_PWR_CLK_ENABLE();
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+    RCC_OscInitTypeDef RCC_OscInitStruct{};
+    RCC_ClkInitTypeDef RCC_ClkInitStruct{};
+
+    // Initializes the RCC Oscillators according to the specified parameters
+    // in the RCC_OscInitTypeDef structure.
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+    RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    RCC_OscInitStruct.PLL.PLLM = 4;
+    RCC_OscInitStruct.PLL.PLLN = 168;
+    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+    RCC_OscInitStruct.PLL.PLLQ = 7;
+    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+        Error_Handler();
+    }
+
+    // Initializes the CPU, AHB and APB buses clocks
+    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+        | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+
+    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK) {
+        Error_Handler();
+    }
+}
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
+void Error_Handler()
+{
+    // User can add his own implementation to report the HAL error return state
+    __disable_irq();
+    while (true)
+    {
+    }
+}
+
+#ifdef USE_FULL_ASSERT
+/**
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(std::uint8_t* file, uint32_t line)
+{
+  // User can add his own implementation to report the file name and line number,
+  // ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line)
+}
+#endif
