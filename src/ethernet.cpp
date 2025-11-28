@@ -3,9 +3,9 @@
 #include <cstring>
 #include <cstdint>
 
-namespace Ethernet {
-    ETH_DMADescTypeDef  DMARxDscrTab[ETH_RX_DESC_CNT]; // Ethernet Rx DMA Descriptors
-    ETH_DMADescTypeDef  DMATxDscrTab[ETH_TX_DESC_CNT]; // Ethernet Tx DMA Descriptors
+namespace STM32 {
+    ETH_DMADescTypeDef DMARxDscrTab[ETH_RX_DESC_CNT]; // Ethernet Rx DMA Descriptors
+    ETH_DMADescTypeDef DMATxDscrTab[ETH_TX_DESC_CNT]; // Ethernet Tx DMA Descriptors
 
     ETH_TxPacketConfig TxConfig{};
     ETH_HandleTypeDef heth{};

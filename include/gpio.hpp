@@ -1,6 +1,8 @@
 #pragma once
 
-namespace GPIO {
+#include <cstdint>
+
+namespace STM32 {
     class GPIO {
     public:
         static void Init();

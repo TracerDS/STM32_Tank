@@ -5,23 +5,30 @@
 #include <gpio.hpp>
 #include <sysclock.hpp>
 #include <hal.hpp>
+#include <lcd.hpp>
+
+using namespace STM32;
 
 int main() {
     // Reset of all peripherals, Initializes the Flash interface and the Systick.
-    HAL::HAL::Init();
-
+    HAL::Init();
+    
     // Configure the system clock
-    SysClock::SysClock::Init();
+    SysClock::Init();
 
     // Initialize all configured peripherals
-    GPIO::GPIO::Init();
-    Ethernet::Ethernet::Init();
-    USART::USART::Init();
-    USB_OTG::USB_OTG::Init();
+    GPIO::Init();
+    Ethernet::Init();
+    USART::Init();
+    USB_OTG::Init();
+    LCD::Init();
+
+    LCD::Clear();
+    LCD::Print("Abc");
 
     while (true) {
-        HAL::HAL::TogglePin(Pins::LD1_Pin);
-        HAL::HAL::Delay(500);
+        HAL::TogglePin(Pins::LD1_Pin);
+        HAL::Delay(500);
     }
 }
 

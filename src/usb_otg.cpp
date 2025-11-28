@@ -1,7 +1,7 @@
 #include <usb_otg.hpp>
 #include <main.hpp>
 
-namespace USB_OTG {
+namespace STM32 {
     PCD_HandleTypeDef hpcd_USB_OTG_FS;
 
     /**

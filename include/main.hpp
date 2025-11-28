@@ -1,30 +1,46 @@
 #pragma once
 
-#ifdef __cplusplus
+#include <cstdint>
+
 extern "C" {
-#endif
-
 #   include <stm32f4xx_hal.h>
-
-#ifdef __cplusplus
 }
-#endif
 
 void Error_Handler();
 
 namespace Pins {
+    namespace Options {
+        // PIN Layout
+        // EXTRA DATA         | HARDWARE BITS 
+        // 00000000 00000000 | XXXXXXXX XXXXXXXX
+        // -------------------------------------
+        // PIN[16:19] = Port ID 0x1=A, 0xB=K, 0xF=Invalid
+
+        constexpr std::uint32_t PortA = 1 << 16;
+        constexpr std::uint32_t PortB = 2 << 16;
+        constexpr std::uint32_t PortC = 3 << 16;
+        constexpr std::uint32_t PortD = 4 << 16;
+        constexpr std::uint32_t PortE = 5 << 16;
+        constexpr std::uint32_t PortF = 6 << 16;
+        constexpr std::uint32_t PortG = 7 << 16;
+        constexpr std::uint32_t PortH = 8 << 16;
+        constexpr std::uint32_t PortI = 9 << 16;
+        constexpr std::uint32_t PortJ = 10 << 16;
+        constexpr std::uint32_t PortK = 11 << 16;
+    }
+
     // User Pins
-    
-    constexpr auto PA6_Pin = GPIO_PIN_6;
-    constexpr auto PB4_Pin = GPIO_PIN_4;
-    constexpr auto PB5_Pin = GPIO_PIN_5;
-    constexpr auto PB6_Pin = GPIO_PIN_6;
-    constexpr auto PD3_Pin = GPIO_PIN_3;
-    constexpr auto PE9_Pin = GPIO_PIN_9;
-    constexpr auto PE11_Pin = GPIO_PIN_11;
-    constexpr auto PE13_Pin = GPIO_PIN_13;
-    constexpr auto PF14_Pin = GPIO_PIN_14;
-    constexpr auto PF15_Pin = GPIO_PIN_15;
+
+    constexpr std::uint32_t PA6_Pin  = GPIO_PIN_6  | Options::PortA;
+    constexpr std::uint32_t PB4_Pin  = GPIO_PIN_4  | Options::PortB;
+    constexpr std::uint32_t PB5_Pin  = GPIO_PIN_5  | Options::PortB;
+    constexpr std::uint32_t PB6_Pin  = GPIO_PIN_6  | Options::PortB;
+    constexpr std::uint32_t PD3_Pin  = GPIO_PIN_3  | Options::PortD;
+    constexpr std::uint32_t PE9_Pin  = GPIO_PIN_9  | Options::PortE;
+    constexpr std::uint32_t PE11_Pin = GPIO_PIN_11 | Options::PortE;
+    constexpr std::uint32_t PE13_Pin = GPIO_PIN_13 | Options::PortE;
+    constexpr std::uint32_t PF14_Pin = GPIO_PIN_14 | Options::PortF;
+    constexpr std::uint32_t PF15_Pin = GPIO_PIN_15 | Options::PortF;
     
     inline auto PA6_GPIO_Port = GPIOA;
     inline auto PB4_GPIO_Port = GPIOB;
@@ -39,10 +55,10 @@ namespace Pins {
     
     // Default Pins
 
-    constexpr auto USER_Btn_Pin = GPIO_PIN_13;
-    constexpr auto LD1_Pin = GPIO_PIN_0;
-    constexpr auto LD2_Pin = GPIO_PIN_7;
-    constexpr auto LD3_Pin = GPIO_PIN_14;
+    constexpr auto USER_Btn_Pin = GPIO_PIN_13 | Options::PortC;
+    constexpr auto LD1_Pin = GPIO_PIN_0 | Options::PortB;
+    constexpr auto LD2_Pin = GPIO_PIN_7 | Options::PortB;
+    constexpr auto LD3_Pin = GPIO_PIN_14 | Options::PortB;
 
     inline auto USER_Btn_GPIO_Port = GPIOC;
     inline auto LD1_GPIO_Port = GPIOB;
@@ -51,13 +67,13 @@ namespace Pins {
 
     // USB Pins
 
-    constexpr auto USB_PowerSwitchOn_Pin = GPIO_PIN_6;
-    constexpr auto USB_OverCurrent_Pin = GPIO_PIN_7;
-    constexpr auto USB_SOF_Pin = GPIO_PIN_8;
-    constexpr auto USB_VBUS_Pin = GPIO_PIN_9;
-    constexpr auto USB_ID_Pin = GPIO_PIN_10;
-    constexpr auto USB_DM_Pin = GPIO_PIN_11;
-    constexpr auto USB_DP_Pin = GPIO_PIN_12;
+    constexpr auto USB_PowerSwitchOn_Pin = GPIO_PIN_6 | Options::PortG;
+    constexpr auto USB_OverCurrent_Pin = GPIO_PIN_7 | Options::PortG;
+    constexpr auto USB_SOF_Pin = GPIO_PIN_8 | Options::PortA;
+    constexpr auto USB_VBUS_Pin = GPIO_PIN_9 | Options::PortA;
+    constexpr auto USB_ID_Pin = GPIO_PIN_10 | Options::PortA;
+    constexpr auto USB_DM_Pin = GPIO_PIN_11 | Options::PortA;
+    constexpr auto USB_DP_Pin = GPIO_PIN_12 | Options::PortA;
 
     inline auto USB_PowerSwitchOn_GPIO_Port = GPIOG;
     inline auto USB_OverCurrent_GPIO_Port = GPIOG;
@@ -69,20 +85,20 @@ namespace Pins {
 
     // System Pins
 
-    constexpr auto RMII_MDC_Pin = GPIO_PIN_1;
-    constexpr auto RMII_REF_CLK_Pin = GPIO_PIN_1;
-    constexpr auto RMII_MDIO_Pin = GPIO_PIN_2;
-    constexpr auto RMII_CRS_DV_Pin = GPIO_PIN_7;
-    constexpr auto RMII_TX_EN_Pin = GPIO_PIN_11;
-    constexpr auto RMII_RXD0_Pin = GPIO_PIN_4;
-    constexpr auto RMII_RXD1_Pin = GPIO_PIN_5;
-    constexpr auto RMII_TXD0_Pin = GPIO_PIN_13;
-    constexpr auto RMII_TXD1_Pin = GPIO_PIN_13;
-    constexpr auto MCO_Pin = GPIO_PIN_0;
-    constexpr auto STLK_RX_Pin = GPIO_PIN_8;
-    constexpr auto STLK_TX_Pin = GPIO_PIN_9;
-    constexpr auto TMS_Pin = GPIO_PIN_13;
-    constexpr auto TCK_Pin = GPIO_PIN_14;
+    constexpr auto RMII_MDC_Pin = GPIO_PIN_1 | Options::PortC;
+    constexpr auto RMII_REF_CLK_Pin = GPIO_PIN_1 | Options::PortA;
+    constexpr auto RMII_MDIO_Pin = GPIO_PIN_2 | Options::PortA;
+    constexpr auto RMII_CRS_DV_Pin = GPIO_PIN_7 | Options::PortA;
+    constexpr auto RMII_TX_EN_Pin = GPIO_PIN_11 | Options::PortG;
+    constexpr auto RMII_RXD0_Pin = GPIO_PIN_4 | Options::PortC;
+    constexpr auto RMII_RXD1_Pin = GPIO_PIN_5 | Options::PortC;
+    constexpr auto RMII_TXD0_Pin = GPIO_PIN_13 | Options::PortG;
+    constexpr auto RMII_TXD1_Pin = GPIO_PIN_13 | Options::PortB;
+    constexpr auto MCO_Pin = GPIO_PIN_0 | Options::PortH;
+    constexpr auto STLK_RX_Pin = GPIO_PIN_8 | Options::PortD;
+    constexpr auto STLK_TX_Pin = GPIO_PIN_9 | Options::PortD;
+    constexpr auto TMS_Pin = GPIO_PIN_13 | Options::PortA;
+    constexpr auto TCK_Pin = GPIO_PIN_14 | Options::PortA;
 
     inline auto RMII_MDC_GPIO_Port = GPIOC;
     inline auto RMII_REF_CLK_GPIO_Port = GPIOA;

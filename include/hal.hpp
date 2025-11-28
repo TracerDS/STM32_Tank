@@ -3,21 +3,23 @@
 #include <cstdint>
 #include <initializer_list>
 
-namespace HAL {
+namespace STM32 {
     class HAL {
     public:
+        using GPIOPin = std::uint32_t;
+        
         static void Init() noexcept;
 
-        static void TogglePin(std::uint16_t pin) noexcept;
-        static void TogglePins(std::initializer_list<std::uint16_t> pins) noexcept;
+        static void TogglePin(GPIOPin pin) noexcept;
+        static void TogglePins(std::initializer_list<GPIOPin> pins) noexcept;
 
-        static void WritePin(std::uint16_t pin, bool value) noexcept;
+        static void WritePin(GPIOPin pin, bool value) noexcept;
         static void WritePins(
-            std::initializer_list<std::uint16_t> pins,
+            std::initializer_list<GPIOPin> pins,
             bool value
         ) noexcept;
 
-        static bool ReadPin(std::uint16_t pin) noexcept;
+        static bool ReadPin(GPIOPin pin) noexcept;
 
         static std::uint32_t GetTick() noexcept;
         static void Delay(std::uint32_t ms) noexcept;

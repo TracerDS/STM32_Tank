@@ -1,7 +1,7 @@
 #include <sysclock.hpp>
 #include <main.hpp>
 
-namespace SysClock {
+namespace STM32 {
     void SysClock::Init() {
         // Configure the main internal regulator output voltage
         __HAL_RCC_PWR_CLK_ENABLE();

@@ -1,7 +1,7 @@
 #include <usart.hpp>
 #include <main.hpp>
 
-namespace USART {
+namespace STM32 {
     UART_HandleTypeDef huart3;
 
     /**

@@ -1,7 +1,8 @@
+#include "hal.hpp"
 #include <gpio.hpp>
 #include <main.hpp>
 
-namespace GPIO {
+namespace STM32 {
     void GPIO::Init() {
         GPIO_InitTypeDef GPIO_InitStruct{};
 
@@ -15,45 +16,49 @@ namespace GPIO {
         __HAL_RCC_GPIOD_CLK_ENABLE();
         __HAL_RCC_GPIOG_CLK_ENABLE();
 
-        HAL_GPIO_WritePin(Pins::PA6_GPIO_Port, Pins::PA6_Pin, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(
-            GPIOB,
-            Pins::LD1_Pin | Pins::LD3_Pin | Pins::PB4_Pin | Pins::PB5_Pin | Pins::PB6_Pin | Pins::LD2_Pin,
-            GPIO_PIN_RESET
+        HAL::WritePins(
+            {
+                Pins::PA6_Pin,
+                Pins::PB4_Pin, Pins::PB5_Pin, Pins::PB6_Pin,
+                Pins::PD3_Pin,
+                Pins::PE9_Pin, Pins::PE11_Pin, Pins::PE13_Pin,
+                Pins::PF14_Pin, Pins::PF15_Pin,
+                Pins::LD1_Pin, Pins::LD2_Pin, Pins::LD3_Pin,
+                Pins::USB_PowerSwitchOn_Pin,
+            },
+            false
         );
-        HAL_GPIO_WritePin(GPIOF, Pins::PF14_Pin | Pins::PF15_Pin, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(GPIOE, Pins::PE9_Pin | Pins::PE11_Pin | Pins::PE13_Pin, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(Pins::USB_PowerSwitchOn_GPIO_Port, Pins::USB_PowerSwitchOn_Pin, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(Pins::PD3_GPIO_Port, Pins::PD3_Pin, GPIO_PIN_RESET);
 
-        GPIO_InitStruct.Pin = Pins::USER_Btn_Pin;
+        GPIO_InitStruct.Pin = (Pins::USER_Btn_Pin) & 0xFFFF;
         GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
         GPIO_InitStruct.Pull = GPIO_NOPULL;
         HAL_GPIO_Init(Pins::USER_Btn_GPIO_Port, &GPIO_InitStruct);
 
-        GPIO_InitStruct.Pin = Pins::PA6_Pin;
+        GPIO_InitStruct.Pin = (Pins::PA6_Pin) & 0xFFFF;
         GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
         GPIO_InitStruct.Pull = GPIO_NOPULL;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
         HAL_GPIO_Init(Pins::PA6_GPIO_Port, &GPIO_InitStruct);
 
-        GPIO_InitStruct.Pin = Pins::LD1_Pin | Pins::LD3_Pin | Pins::PB4_Pin
-            | Pins::PB5_Pin | Pins::PB6_Pin | Pins::LD2_Pin;
+        GPIO_InitStruct.Pin = (
+            Pins::LD1_Pin | Pins::LD3_Pin | Pins::PB4_Pin |
+            Pins::PB5_Pin | Pins::PB6_Pin | Pins::LD2_Pin
+        ) & 0xFFFF;
         HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-        GPIO_InitStruct.Pin = Pins::PF14_Pin | Pins::PF15_Pin;
+        GPIO_InitStruct.Pin = (Pins::PF14_Pin | Pins::PF15_Pin) & 0xFFFF;
         HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-        GPIO_InitStruct.Pin = Pins::PE9_Pin | Pins::PE11_Pin | Pins::PE13_Pin;
+        GPIO_InitStruct.Pin = (Pins::PE9_Pin | Pins::PE11_Pin | Pins::PE13_Pin) & 0xFFFF;
         HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-        GPIO_InitStruct.Pin = Pins::PD3_Pin;
+        GPIO_InitStruct.Pin = (Pins::PD3_Pin) & 0xFFFF;
         HAL_GPIO_Init(Pins::PD3_GPIO_Port, &GPIO_InitStruct);
 
-        GPIO_InitStruct.Pin = Pins::USB_PowerSwitchOn_Pin;
+        GPIO_InitStruct.Pin = (Pins::USB_PowerSwitchOn_Pin) & 0xFFFF;
         HAL_GPIO_Init(Pins::USB_PowerSwitchOn_GPIO_Port, &GPIO_InitStruct);
 
-        GPIO_InitStruct.Pin = Pins::USB_OverCurrent_Pin;
+        GPIO_InitStruct.Pin = (Pins::USB_OverCurrent_Pin) & 0xFFFF;
         GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
         GPIO_InitStruct.Pull = GPIO_NOPULL;
         HAL_GPIO_Init(Pins::USB_OverCurrent_GPIO_Port, &GPIO_InitStruct);
