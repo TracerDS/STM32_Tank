@@ -14,30 +14,31 @@ namespace STM32 {
 
     constexpr auto RS_Pin = Pins::PA6_Pin;
     constexpr auto E_Pin = Pins::PB6_Pin;
-    constexpr auto D0_Pin = Pins::PF15_Pin;
-    constexpr auto D1_Pin = Pins::PE13_Pin;
-    constexpr auto D2_Pin = Pins::PF14_Pin;
-    constexpr auto D3_Pin = Pins::PE11_Pin;
-    constexpr auto D4_Pin = Pins::PE9_Pin;
-    constexpr auto D5_Pin = Pins::PD3_Pin;
-    constexpr auto D6_Pin = Pins::PB4_Pin;
-    constexpr auto D7_Pin = Pins::PB5_Pin;
+    constexpr auto D0_Pin = Pins::PG14_Pin;
+    constexpr auto D1_Pin = Pins::PF15_Pin;
+    constexpr auto D2_Pin = Pins::PE13_Pin;
+    constexpr auto D3_Pin = Pins::PF14_Pin;
+    constexpr auto D4_Pin = Pins::PE11_Pin;
+    constexpr auto D5_Pin = Pins::PE9_Pin;
+    constexpr auto D6_Pin = Pins::PF13_Pin;
+    constexpr auto D7_Pin = Pins::PF12_Pin;
 
-    inline auto RS_GPIO_Port = Pins::PA6_GPIO_Port;
-    inline auto E_GPIO_Port = Pins::PB6_GPIO_Port;
-    inline auto D0_GPIO_Port = Pins::PF15_GPIO_Port;
-    inline auto D1_GPIO_Port = Pins::PE13_GPIO_Port;
-    inline auto D2_GPIO_Port = Pins::PF14_GPIO_Port;
-    inline auto D3_GPIO_Port = Pins::PE11_GPIO_Port;
-    inline auto D4_GPIO_Port = Pins::PE9_GPIO_Port;
-    inline auto D5_GPIO_Port = Pins::PD3_GPIO_Port;
-    inline auto D6_GPIO_Port = Pins::PB4_GPIO_Port;
-    inline auto D7_GPIO_Port = Pins::PB5_GPIO_Port;
+    inline auto RS_GPIO_Port = Pins::Options::PinToGPIO(RS_Pin);
+    inline auto E_GPIO_Port  = Pins::Options::PinToGPIO(E_Pin);
+    inline auto D0_GPIO_Port = Pins::Options::PinToGPIO(D0_Pin);
+    inline auto D1_GPIO_Port = Pins::Options::PinToGPIO(D1_Pin);
+    inline auto D2_GPIO_Port = Pins::Options::PinToGPIO(D2_Pin);
+    inline auto D3_GPIO_Port = Pins::Options::PinToGPIO(D3_Pin);
+    inline auto D4_GPIO_Port = Pins::Options::PinToGPIO(D4_Pin);
+    inline auto D5_GPIO_Port = Pins::Options::PinToGPIO(D5_Pin);
+    inline auto D6_GPIO_Port = Pins::Options::PinToGPIO(D6_Pin);
+    inline auto D7_GPIO_Port = Pins::Options::PinToGPIO(D7_Pin);
 
     void Pulse() noexcept {
         HAL::WritePin(E_Pin, true);
         HAL::Delay(1); // Enable pulse must be >450ns
         HAL::WritePin(E_Pin, false);
+        HAL::Delay(1); // Enable pulse must be >450ns
     }
 
     void Send(std::uint8_t data) noexcept {
@@ -53,17 +54,18 @@ namespace STM32 {
 
     void LCD::Init() noexcept {
         // 0. Wait for LCD to stabilize
-        while(HAL::GetTick() < 50);
+        //while(HAL::GetTick() < 50);
+        HAL::Delay(50);
 
         // 1. Init
         HAL::WritePins({ RS_Pin, E_Pin }, false);
 
         // 2. Initialize 8bit mode
-        LCD::SendCommand(0b110000);
+        LCD::SendCommand(0x38);
         HAL::Delay(5);
-        LCD::SendCommand(0b110000);
+        LCD::SendCommand(0x38);
         HAL::Delay(1);
-        LCD::SendCommand(0b110000);
+        LCD::SendCommand(0x38);
         HAL::Delay(1);
 
         // 3. Full Function Set command (8-bit, 2 lines, 5x8 font)
@@ -72,14 +74,12 @@ namespace STM32 {
 
         // 4. Screen enabled, cursor disabled, blinking disabled
         LCD::SendCommand(0x0C);
-        HAL::Delay(1);
 
         // 5. Clear screen
         LCD::Clear();
 
         // 6. Entry Mode Set (Increment, No Shift)
         LCD::SendCommand(0x06);
-        HAL::Delay(1);
     }
     
     void LCD::Clear() noexcept {
@@ -109,7 +109,6 @@ namespace STM32 {
         HAL::WritePin(RS_Pin, false);
         Send(cmd);
         Pulse();
-        HAL::Delay(5);
     }
 
     void LCD::SendData(std::uint8_t data) noexcept {

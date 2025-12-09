@@ -21,10 +21,11 @@ int main() {
     Ethernet::Init();
     USART::Init();
     USB_OTG::Init();
-    LCD::Init();
 
+    LCD::Init();
     LCD::Clear();
-    LCD::Print("Abc");
+    LCD::Print("ABCDEF");
+    LCD::Print("abcdef");
 
     while (true) {
         HAL::TogglePin(Pins::LD1_Pin);

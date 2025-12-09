@@ -48,7 +48,7 @@ namespace STM32 {
 
         HAL_GPIO_WritePin(
             port,
-            pin,
+            static_cast<std::uint16_t>(pin & 0xFFFF),
             state ? GPIO_PinState::GPIO_PIN_SET : GPIO_PinState::GPIO_PIN_RESET
         );
     }
